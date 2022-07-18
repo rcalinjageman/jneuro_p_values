@@ -1,22 +1,15 @@
 # Libraries
 
+
 # Settings / Options
 jneurosci_url <- "https://www.jneurosci.org/content/jneuro/"
 articles_file <- "jneuro_articles.csv"
 paper_suffix <- ".full.pdf"
 
+
 # Initialization
 articles <- read.csv(articles_file)
 
-articles$full_url <- paste(
-  jneurosci_url,
-  articles$url,
-  paper_suffix,
-  sep = ""
-)
-
-topaste <- data.frame(url = articles$full_url)
-write.csv(topaste, "justurl.csv")
 
 # Get each pdf, unless it already exists
 x <- 1
@@ -26,6 +19,12 @@ for (x in 1:nrow(articles)) {
     articles[[x, "url"]],
     paper_suffix,
     sep = ""
+  )
+
+  article_url <- gsub(
+    pattern = "https://",
+    replacement = "http://",
+    x = article_url
   )
 
   destination <- paste(
@@ -40,6 +39,8 @@ for (x in 1:nrow(articles)) {
     download.file(
       url = article_url,
       destfile = destination,
+      method = "libcurl",
+      mode="wb",
       cacheOK = FALSE
     )
   }

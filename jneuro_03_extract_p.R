@@ -9,6 +9,7 @@ RGX_COMP <- "[<>=,]"
 RGX_DEC <- "\\.\\d+"
 
 articles_file <- "jneuro_articles.csv"
+p_value_file <- "jneuro_p_values.csv"
 
 
 # Data - stores each p value found
@@ -28,7 +29,7 @@ articles <- read.csv(articles_file)
 
 
 # Process each article
-z <- 1
+z <- 813
 for (z in 1:nrow(articles)) {
   # Article properties
   article_key <- articles[z, "file_stem"]
@@ -45,6 +46,18 @@ for (z in 1:nrow(articles)) {
   # Get text and unlist it
   pdf_text <- pdftools::pdf_text(destination)
   pdf_text<-unlist(pdf_text)
+  pdf_text <- gsub(
+    pattern = "p ⬍ 0",
+    replacement = "p < 0",
+    x = pdf_text
+  )
+  pdf_text <- gsub(
+    pattern = "p ⫽ 0",
+    replacement = "p = 0",
+    x = pdf_text
+  )
+
+
 
   # Find each reported p value result in the form: (p </>/= decimal)
   nhst_raw <- gregexpr(
@@ -127,10 +140,9 @@ for (z in 1:nrow(articles)) {
 }
 
 
-
 # Manual coding -- Freeman wasn't parsing correctly due to an encoding error; easier to hand code these
 res[nrow(res)+ 1, ] <- c(
-  "Freeman_2021",
+  "41_1_89",
   "This result, according to a two-sample Kolmogorov-Smirnov test, is highly significant (n ¼ 180 per direction; p , 2:2  1016)",
   2.2*10^-16,
   "<",
@@ -141,7 +153,7 @@ res[nrow(res)+ 1, ] <- c(
 )
 
 res[nrow(res)+ 1, ] <- c(
-  "Freeman_2021",
+  "41_1_89",
   "The correlation coefficient in this figure is 0.75, which is highly significant (n ¼ 3721; p , 2:2  1016)",
   2.2*10^-16,
   "<",
@@ -152,7 +164,7 @@ res[nrow(res)+ 1, ] <- c(
 )
 
 res[nrow(res)+ 1, ] <- c(
-  "Freeman_2021",
+  "41_1_89",
   "A one-sided sign test (sign ¼ 2728; n ¼ 3721; p , 2:2  1016) indicates that this result is highly significant.",
   2.2*10^-16,
   "<",
@@ -163,7 +175,7 @@ res[nrow(res)+ 1, ] <- c(
 )
 
 res[nrow(res)+ 1, ] <- c(
-  "Freeman_2021",
+  "41_1_89",
   "Indeed, the correlation between the two maps was positive (correlation coefficient ¼ 0:61) and highly significant (n ¼ 3721; p , 2:2  1016)",
   2.2*10^-16,
   "<",
@@ -174,7 +186,7 @@ res[nrow(res)+ 1, ] <- c(
 )
 
 res[nrow(res)+ 1, ] <- c(
-  "Freeman_2021",
+  "41_1_89",
   "Offset > 0:   p <   2.2 x 10–16",
   2.2*10^-16,
   "<",
@@ -185,5 +197,5 @@ res[nrow(res)+ 1, ] <- c(
 )
 
 
-write.csv(res, "jneuro_p_values.csv", row.names = FALSE)
+write.csv(res, p_value_file, row.names = FALSE)
 
